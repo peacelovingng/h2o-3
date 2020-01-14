@@ -12,9 +12,9 @@ import water.api.GridSearchHandler;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-public class TargetEncoderRGSTest extends TestUtil {
+public class TargetEncoderParametersGSTest extends TestUtil {
 
   @BeforeClass
   public static void setup() {
