@@ -37,6 +37,9 @@ public class TargetEncoderBuilder extends ModelBuilder<TargetEncoderModel, Targe
     @Override
     public void computeImpl() {
       final int numColsRemoved = hasFoldCol() ? 2 : 1; // Response is always at the last index, fold column is on the index before.
+
+      // TODO train() would return null in case of running from GridSearch.
+      //  Probably need to call `init(false);` from `computeImpl()` but there are some issues with `_targetEncoderModel.write_lock(_job);`
       final String[] encodedColumns = Arrays.copyOf(train().names(), train().names().length - numColsRemoved);
       TargetEncoder tec = new TargetEncoder(encodedColumns);
 
