@@ -375,6 +375,7 @@ public final class GridSearch<MP extends Model.Parameters> extends Keyed<GridSea
           // Update progress by 1 increment
           _job.update(1);
           // Always update grid in DKV after model building attempt
+          grid.write_lock(_job); // TODO maybe include this into .update(job) method?
           grid.update(_job);
           attemptGridSave(grid);
         } // finally
