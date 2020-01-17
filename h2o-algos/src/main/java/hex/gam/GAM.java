@@ -6,6 +6,7 @@ import hex.glm.GLMModel.GLMParameters.Family;
 import hex.glm.GLMModel.GLMParameters.Link;
 import water.Key;
 import water.exceptions.H2OModelBuilderIllegalArgumentException;
+import water.fvec.Frame;
 
 
 public class GAM extends ModelBuilder<GAMModel, GAMModel.GAMParameters, GAMModel.GAMModelOutput> {
@@ -39,7 +40,7 @@ public class GAM extends ModelBuilder<GAMModel, GAMModel.GAMParameters, GAMModel
       
       if (!_parms._family.equals(Family.gaussian)) 
         error("_family", "Only gaussian family is supported for now.");
-      if (!_parms._link.equals(Link.identity) || !_parms._link.equals(Link.family_default))
+      if (!_parms._link.equals(Link.identity) && !_parms._link.equals(Link.family_default))
         error("_link", "Only identity or family_default link is supported for now.");
     }
   }
@@ -75,6 +76,19 @@ public class GAM extends ModelBuilder<GAMModel, GAMModel.GAMParameters, GAMModel
     ;
   }
   private class GAMDriver extends Driver {
+    /***
+     * This method will take the _train that contains the predictor columns and response columns only and add to it
+     * the following:
+     * 1. For each predictor included in gam_x, expand it out to calculate the f(x) and attach to the frame.
+     * @return
+     */
+    Frame adaptTrain() {
+      Frame orig = _parms.train();  // contain all needed columns
+      Frame adapt = new Frame(_parms.train());  // only contains predictors and response column
+      
+      return adapt;
+    }
+    
     @Override
     public void computeImpl() {
       init(true); //this can change the seed if it was set to -1
@@ -83,6 +97,7 @@ public class GAM extends ModelBuilder<GAMModel, GAMModel.GAMParameters, GAMModel
         throw H2OModelBuilderIllegalArgumentException.makeFromBuilder(GAM.this);
       
       _job.update(0, "Initializing model training");
+      
       buildModel(); // build gam model 
     }
 
@@ -90,7 +105,7 @@ public class GAM extends ModelBuilder<GAMModel, GAMModel.GAMParameters, GAMModel
       GAMModel model = new GAMModel(dest(), _parms, new GAMModel.GAMModelOutput(GAM.this));
       model.delete_and_lock(_job);
 
-     // DataInfo adaptTrain();  // 
+     Frame newTFrame = adaptTrain();  // get frames with correct predictors and spline functions
     }
   }
 }

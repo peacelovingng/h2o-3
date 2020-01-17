@@ -70,7 +70,7 @@ public class GAMV3 extends ModelBuilderSchema<GAM, GAMV3, GAMV3.GAMParametersV3>
             "max_runtime_secs",
             "custom_metric_func",
             "k",  // array: number of knots for each predictor
-            "gam_X",  // array: predictor column index
+            "gam_X",  // array: predictor column names array
             "bs", // array, name of basis functions used
             "scale" // array, smoothing parameter for GAM
     };
@@ -220,8 +220,8 @@ public class GAMV3 extends ModelBuilderSchema<GAM, GAMV3, GAMV3.GAMParametersV3>
     @API(help = "Number of knots for gam predictors", required = false, level = Level.critical, gridable = true)
     public int[] k;
 
-    @API(help = "Predictor column indices for gam", required = true, level = Level.critical, gridable = true)
-    public int[] gam_X;
+    @API(help = "Predictor column names for gam", required = true, level = Level.critical, gridable = true)
+    public String[] gam_X;
 
     @API(help = "Smoothing parameter for gam predictors", required = false, level = Level.critical, gridable = true)
     public double[] scale;
